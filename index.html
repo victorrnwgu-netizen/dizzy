@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIZZY — Beyond Ordinary.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#000000;
+    --white:#ffffff;
+    --off-white:#f5f4f2;
+    --gray-900:#0a0a0a;
+    --gray-800:#141414;
+    --gray-600:#3a3a3a;
+    --gray-400:#8a8a8a;
+    --gray-200:#d8d8d6;
+    --line: rgba(255,255,255,0.14);
+    --line-dark: rgba(0,0,0,0.12);
+    --ease: cubic-bezier(.16,.8,.24,1);
+    --ease-soft: cubic-bezier(.22,.61,.36,1);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--black);
+    color:var(--white);
+    font-family:'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection{background:var(--white);color:var(--black);}
+
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+  img{display:block;max-width:100%;}
+
+  .display{
+    font-family:'Archivo Black', 'Archivo', sans-serif;
+    letter-spacing:-0.02em;
+    text-transform:uppercase;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    font-weight:600;
+    color:var(--gray-400);
+  }
+
+  /* ============ SCROLLBAR ============ */
+  ::-webkit-scrollbar{width:9px;}
+  ::-webkit-scrollbar-track{background:var(--black);}
+  ::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:0;}
+  ::-webkit-scrollbar-thumb:hover{background:#3f3f3f;}
+
+  /* ======================================================
+     LANDING / ENTER SCREEN
+     ====================================================== */
+  #landing{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    overflow:hidden;
+    background:var(--black);
+    transition: opacity 1.1s var(--ease), visibility 1.1s var(--ease);
+  }
+  #landing.hide{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+  }
+
+  .slideshow{
+    position:absolute;
+    inset:0;
+    z-index:1;
+  }
+  .slide{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    transform:scale(1.08);
+    transition: opacity 1.6s var(--ease-soft), transform 6s linear;
+    background-size:cover;
+    background-position:center 20%;
+    filter:saturate(0.92) contrast(1.04);
+  }
+  .slide.active{
+    opacity:1;
+    transform:scale(1);
+    z-index:2;
+  }
+  .slide.prev{
+    opacity:0;
+    z-index:1;
+  }
+
+  .landing-overlay{
+    position:absolute;
+    inset:0;
+    z-index:3;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% 45%, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.72) 60%, rgba(0,0,0,0.88) 100%),
+      linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 22%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.75) 100%);
+  }
+
+  .landing-grain{
+    position:absolute;
+    inset:0;
+    z-index:4;
+    opacity:0.04;
+    pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'%3E%3C/feTurbulence%3E%3CfeDisplacementMap in='SourceGraphic' scale='90'%3E%3C/feDisplacementMap%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .landing-content{
+    position:relative;
+    z-index:5;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:32px;
+  }
+
+  .landing-logo{
+    width:124px;
+    height:auto;
+    filter: drop-shadow(0 8px 30px rgba(0,0,0,0.5)) invert(1) brightness(2);
+    opacity:0;
+    animation: revealUp 1.3s var(--ease) 0.25s forwards;
+  }
+
+  .landing-word{
+    margin-top:22px;
+    font-size:clamp(40px, 9vw, 84px);
+    line-height:0.92;
+    font-weight:900;
+    letter-spacing:-0.02em;
+    opacity:0;
+    animation: revealUp 1.3s var(--ease) 0.45s forwards;
+  }
+
+  .landing-tagline{
+    margin-top:14px;
+    font-family:'Archivo', sans-serif;
+    font-weight:400;
+    font-size:clamp(13px, 1.6vw, 17px);
+    letter-spacing:0.42em;
+    text-transform:uppercase;
+    color:var(--gray-200);
+    opacity:0;
+    animation: revealUp 1.3s var(--ease) 0.65s forwards;
+  }
+
+  @keyframes revealUp{
+    from{opacity:0; transform:translateY(26px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  .enter-btn{
+    margin-top:52px;
+    position:relative;
+    padding:18px 56px;
+    border:1px solid rgba(255,255,255,0.7);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    color:var(--white);
+    overflow:hidden;
+    opacity:0;
+    animation: revealUp 1.3s var(--ease) 0.9s forwards;
+    transition: color 0.5s var(--ease), border-color 0.5s var(--ease), letter-spacing 0.5s var(--ease);
+  }
+  .enter-btn::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:var(--white);
+    transform: translateY(101%);
+    transition: transform 0.55s var(--ease);
+    z-index:-1;
+  }
+  .enter-btn:hover{
+    color:var(--black);
+    letter-spacing:0.38em;
+  }
+  .enter-btn:hover::before{
+    transform: translateY(0%);
+  }
+  .enter-btn span{position:relative; z-index:1;}
+
+  .landing-scroll-hint{
+    position:absolute;
+    bottom:34px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:5;
+    font-size:10px;
+    letter-spacing:0.3em;
+    color:var(--gray-400);
+    text-transform:uppercase;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    opacity:0;
+    animation: revealUp 1.3s var(--ease) 1.15s forwards;
+  }
+  .scroll-line{
+    width:1px;
+    height:34px;
+    background:linear-gradient(to bottom, rgba(255,255,255,0.7), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse{
+    0%,100%{opacity:0.3; transform:scaleY(0.7); transform-origin:top;}
+    50%{opacity:1; transform:scaleY(1); transform-origin:top;}
+  }
+
+  .landing-fade-exit{
+    animation: exitFade 1s var(--ease) forwards;
+  }
+  @keyframes exitFade{
+    to{ opacity:0; transform:scale(1.04); filter:blur(4px); }
+  }
+
+  .corner-mark{
+    position:absolute;
+    z-index:5;
+    font-size:10px;
+    letter-spacing:0.25em;
+    color:var(--gray-400);
+    text-transform:uppercase;
+  }
+  .corner-mark.tl{top:28px; left:28px;}
+  .corner-mark.tr{top:28px; right:28px; text-align:right;}
+
+  /* ======================================================
+     SITE / NAV
+     ====================================================== */
+  #site{
+    position:relative;
+    opacity:0;
+  }
+  #site.visible{
+    opacity:1;
+    transition: opacity 0.9s var(--ease) 0.15s;
+  }
+
+  header.navbar{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:500;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 40px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom:1px solid var(--line);
+    transition: background 0.4s var(--ease), padding 0.4s var(--ease), border-color 0.4s var(--ease);
+  }
+  header.navbar.scrolled{
+    padding:13px 40px;
+    background: rgba(0,0,0,0.82);
+  }
+  .nav-logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .nav-logo img{
+    height:30px;
+    width:auto;
+    filter:invert(1) brightness(2);
+    transition: height 0.4s var(--ease);
+  }
+  header.navbar.scrolled .nav-logo img{height:24px;}
+  .nav-logo-text{
+    font-family:'Archivo Black', sans-serif;
+    font-size:17px;
+    letter-spacing:0.04em;
+  }
+
+  .nav-menu{
+    display:flex;
+    align-items:center;
+    gap:42px;
+    list-style:none;
+  }
+  .nav-menu a{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gray-200);
+    position:relative;
+    padding-bottom:4px;
+  }
+  .nav-menu a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:0%;
+    height:1px;
+    background:var(--white);
+    transition: width 0.4s var(--ease);
+  }
+  .nav-menu a:hover{color:var(--white);}
+  .nav-menu a:hover::after{width:100%;}
+
+  .nav-right{
+    display:flex;
+    align-items:center;
+    gap:26px;
+  }
+  .cart-btn{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:38px; height:38px;
+  }
+  .cart-btn svg{width:20px; height:20px; stroke:var(--white);}
+  .cart-count{
+    position:absolute;
+    top:-2px; right:-2px;
+    background:var(--white);
+    color:var(--black);
+    font-size:9px;
+    font-weight:800;
+    width:16px; height:16px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .nav-burger{
+    display:none;
+    flex-direction:column;
+    gap:5px;
+    width:26px;
+  }
+  .nav-burger span{
+    height:1.5px;
+    width:100%;
+    background:var(--white);
+    transition: all 0.35s var(--ease);
+  }
+
+  /* ======================================================
+     HERO (STORE)
+     ====================================================== */
+  .hero{
+    position:relative;
+    height:100vh;
+    min-height:680px;
+    width:100%;
+    overflow:hidden;
+    display:flex;
+    align-items:flex-end;
+  }
+  .hero-bg{
+    position:absolute;
+    inset:0;
+    background-size:cover;
+    background-position:center 18%;
+    transform:scale(1.12);
+    animation: heroZoom 18s var(--ease-soft) forwards;
+  }
+  @keyframes heroZoom{
+    to{ transform:scale(1); }
+  }
+  .hero-overlay{
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.05) 38%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.92) 100%);
+  }
+  .hero-content{
+    position:relative;
+    z-index:2;
+    width:100%;
+    padding:0 40px 90px;
+  }
+  .hero-eyebrow{
+    font-size:11px;
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    color:var(--gray-200);
+    margin-bottom:18px;
+    opacity:0;
+    animation: revealUp 1s var(--ease) 0.2s forwards;
+  }
+  .hero-headline{
+    font-size:clamp(40px, 7.2vw, 108px);
+    line-height:0.92;
+    font-weight:900;
+    max-width:1000px;
+    opacity:0;
+    animation: revealUp 1.1s var(--ease) 0.35s forwards;
+  }
+  .hero-sub{
+    margin-top:22px;
+    max-width:480px;
+    font-size:16px;
+    line-height:1.55;
+    color:var(--gray-200);
+    font-weight:400;
+    opacity:0;
+    animation: revealUp 1.1s var(--ease) 0.55s forwards;
+  }
+  .hero-actions{
+    margin-top:38px;
+    display:flex;
+    gap:18px;
+    align-items:center;
+    opacity:0;
+    animation: revealUp 1.1s var(--ease) 0.7s forwards;
+  }
+
+  .btn-primary{
+    position:relative;
+    padding:17px 42px;
+    background:var(--white);
+    color:var(--black);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    overflow:hidden;
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 30px rgba(255,255,255,0.12);
+  }
+
+  .btn-ghost{
+    padding:17px 36px;
+    border:1px solid rgba(255,255,255,0.45);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--white);
+    transition: border-color 0.4s var(--ease), background 0.4s var(--ease);
+  }
+  .btn-ghost:hover{
+    border-color:#fff;
+    background:rgba(255,255,255,0.06);
+  }
+
+  .hero-scroll{
+    position:absolute;
+    bottom:34px;
+    right:40px;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:10px;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--gray-400);
+  }
+  .hero-scroll .scroll-line{height:46px;}
+
+  /* ======================================================
+     MARQUEE
+     ====================================================== */
+  .marquee-wrap{
+    background:var(--white);
+    color:var(--black);
+    padding:16px 0;
+    overflow:hidden;
+    border-bottom:1px solid #000;
+  }
+  .marquee-track{
+    display:flex;
+    width:max-content;
+    animation: marquee 26s linear infinite;
+    gap:48px;
+  }
+  .marquee-track span{
+    font-family:'Archivo Black', sans-serif;
+    font-size:18px;
+    letter-spacing:0.04em;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+    gap:48px;
+  }
+  .marquee-track span::after{
+    content:'◆';
+    font-size:10px;
+    margin-left:48px;
+  }
+  @keyframes marquee{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+
+  /* ======================================================
+     SECTION HEADERS
+     ====================================================== */
+  .section{
+    padding:120px 40px;
+    max-width:1480px;
+    margin:0 auto;
+  }
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:56px;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .section-eyebrow{
+    font-size:11px;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:var(--gray-400);
+    margin-bottom:14px;
+    display:block;
+  }
+  .section-title{
+    font-size:clamp(32px, 4.4vw, 56px);
+    font-weight:900;
+    line-height:0.96;
+  }
+  .section-link{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    border-bottom:1px solid var(--white);
+    padding-bottom:4px;
+    transition:opacity 0.3s var(--ease);
+    white-space:nowrap;
+  }
+  .section-link:hover{opacity:0.6;}
+
+  .reveal{
+    opacity:0;
+    transform:translateY(36px);
+    transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+  }
+  .reveal.in-view{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* ======================================================
+     PRODUCT GRID
+     ====================================================== */
+  .product-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:2px;
+    background:var(--gray-800);
+  }
+  .product-card{
+    background:var(--black);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .product-media{
+    position:relative;
+    aspect-ratio:3/4;
+    overflow:hidden;
+    background:linear-gradient(150deg, #1c1c1c 0%, #0c0c0c 60%, #1a1a1a 100%);
+  }
+  .product-media .ph-mark{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Archivo Black', sans-serif;
+    font-size:15px;
+    letter-spacing:0.1em;
+    color:rgba(255,255,255,0.16);
+    text-transform:uppercase;
+    transition: transform 0.8s var(--ease), opacity 0.6s ease;
+  }
+  .product-card:hover .ph-mark{
+    transform:scale(1.08);
+    opacity:0.7;
+  }
+  .product-media::after{
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(160deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%);
+    transform:translateX(-120%);
+    transition:transform 0.9s var(--ease);
+  }
+  .product-card:hover .product-media::after{
+    transform:translateX(120%);
+  }
+
+  .product-tag{
+    position:absolute;
+    top:14px; left:14px;
+    z-index:2;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    padding:6px 11px;
+    background:var(--white);
+    color:var(--black);
+  }
+  .product-tag.outline{
+    background:transparent;
+    color:var(--white);
+    border:1px solid rgba(255,255,255,0.6);
+  }
+
+  .product-quickview{
+    position:absolute;
+    left:50%;
+    bottom:14px;
+    transform:translate(-50%, 18px);
+    z-index:3;
+    opacity:0;
+    padding:11px 22px;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    background:rgba(255,255,255,0.95);
+    color:var(--black);
+    white-space:nowrap;
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  }
+  .product-card:hover .product-quickview{
+    opacity:1;
+    transform:translate(-50%, 0);
+  }
+
+  .product-info{
+    padding:18px 18px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    flex:1;
+  }
+  .product-name{
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+  }
+  .product-meta{
+    font-size:11px;
+    color:var(--gray-400);
+    letter-spacing:0.04em;
+  }
+  .product-bottom{
+    margin-top:auto;
+    padding-top:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .product-price{
+    font-size:15px;
+    font-weight:700;
+  }
+  .add-cart-btn{
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    padding:9px 16px;
+    border:1px solid var(--white);
+    color:var(--white);
+    transition: background 0.35s var(--ease), color 0.35s var(--ease);
+  }
+  .add-cart-btn:hover{
+    background:var(--white);
+    color:var(--black);
+  }
+  .add-cart-btn.added{
+    background:var(--white);
+    color:var(--black);
+  }
+
+  /* ======================================================
+     RESPONSIVE
+     ====================================================== */
+  @media (max-width: 1024px){
+    .product-grid{grid-template-columns:repeat(2, 1fr);}
+    .nav-menu{display:none;}
+    .nav-burger{display:flex;}
+    .footer-top{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width: 768px){
+    .product-grid{grid-template-columns:1fr;}
+    .newsletter-inner{flex-direction:column; align-items:flex-start;}
+    .editorial{grid-template-columns:1fr;}
+    .editorial-text{padding:60px 40px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- LANDING SCREEN -->
+<div id="landing">
+  <div class="slideshow">
+    <div class="slide active" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 1200%22><rect fill=%22%23111%22 width=%221200%22 height=%221200%22/></svg>')"></div>
+  </div>
+  <div class="landing-overlay"></div>
+  <div class="landing-grain"></div>
+  <div class="landing-content">
+    <div class="landing-logo">◆</div>
+    <h1 class="landing-word">DIZZY</h1>
+    <p class="landing-tagline">Beyond Ordinary</p>
+    <button class="enter-btn"><span>Enter Store</span></button>
+    <div class="landing-scroll-hint">
+      <span>Scroll to explore</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+  <div class="corner-mark tl">EST 2024</div>
+  <div class="corner-mark tr">DIZZY®</div>
+</div>
+
+<!-- MAIN SITE -->
+<div id="site">
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-logo">
+      <span>◆</span>
+      <span class="nav-logo-text">DIZZY</span>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="cart-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+          <path d="M9 2L6 6H3v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6h-3L15 2"/>
+        </svg>
+        <span class="cart-count">0</span>
+      </button>
+      <button class="nav-burger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="shop">
+    <div class="hero-bg" style="background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 1000%22><rect fill=%22%23222%22 width=%221200%22 height=%221000%22/><circle cx=%22600%22 cy=%22500%22 r=%22300%22 fill=%22%23333%22 opacity=%220.5%22/></svg>')"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-eyebrow">New Collection</span>
+      <h1 class="hero-headline">Elevate Your Style</h1>
+      <p class="hero-sub">Discover carefully curated pieces designed for the bold and unconventional.</p>
+      <div class="hero-actions">
+        <button class="btn-primary">Shop Now</button>
+        <button class="btn-ghost">Learn More</button>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Free Shipping • Premium Quality • 30-Day Returns</span>
+      <span>Free Shipping • Premium Quality • 30-Day Returns</span>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <section class="section" id="products">
+    <div class="section-head">
+      <div>
+        <span class="section-eyebrow">Our Collection</span>
+        <h2 class="section-title">Featured Items</h2>
+      </div>
+      <a href="#" class="section-link">View All</a>
+    </div>
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-media">
+          <span class="ph-mark">Product Image</span>
+        </div>
+        <div class="product-tag">New</div>
+        <button class="product-quickview">Quick View</button>
+        <div class="product-info">
+          <h3 class="product-name">Oversized Tee</h3>
+          <p class="product-meta">Black • 100% Cotton</p>
+          <div class="product-bottom">
+            <span class="product-price">$49</span>
+            <button class="add-cart-btn">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-media">
+          <span class="ph-mark">Product Image</span>
+        </div>
+        <div class="product-tag outline">Limited</div>
+        <button class="product-quickview">Quick View</button>
+        <div class="product-info">
+          <h3 class="product-name">Cargo Jacket</h3>
+          <p class="product-meta">Navy • Technical Fabric</p>
+          <div class="product-bottom">
+            <span class="product-price">$129</span>
+            <button class="add-cart-btn">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-media">
+          <span class="ph-mark">Product Image</span>
+        </div>
+        <div class="product-tag">New</div>
+        <button class="product-quickview">Quick View</button>
+        <div class="product-info">
+          <h3 class="product-name">Wide Trousers</h3>
+          <p class="product-meta">Cream • Premium Cotton</p>
+          <div class="product-bottom">
+            <span class="product-price">$89</span>
+            <button class="add-cart-btn">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-media">
+          <span class="ph-mark">Product Image</span>
+        </div>
+        <button class="product-quickview">Quick View</button>
+        <div class="product-info">
+          <h3 class="product-name">Minimal Hoodie</h3>
+          <p class="product-meta">Charcoal • Organic Cotton</p>
+          <div class="product-bottom">
+            <span class="product-price">$79</span>
+            <button class="add-cart-btn">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter-strip" id="contact">
+    <div class="newsletter-inner">
+      <h3>Stay Updated</h3>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thanks for subscribing!');">
+        <input type="email" placeholder="your@email.com" required>
+        <button type="submit">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div style="font-family:'Archivo Black'; font-size:20px; margin-bottom:10px;">◆ DIZZY</div>
+          <p>Curated fashion for those who dare to be different. Est. 2024.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#">New Arrivals</a></li>
+            <li><a href="#">Best Sellers</a></li>
+            <li><a href="#">Collections</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Shipping</a></li>
+            <li><a href="#">Returns</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Follow</h4>
+          <div class="footer-social">
+            <a href="#" title="Instagram">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><rect x="2" y="2" width="20" height="20" rx="4.5"/></svg>
+            </a>
+            <a href="#" title="Twitter">
+              <svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2s9 5 20 5a9.5 9.5 0 00-9-5.5c4.75 2.25 7-5.85 7-5.85s3 1 4-2c1-3 0-5 0-5"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 DIZZY. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer-overlay"></div>
+<div class="cart-drawer">
+  <div class="cart-drawer-head">
+    <h4>Your Cart</h4>
+    <button class="cart-close">×</button>
+  </div>
+  <div class="cart-drawer-body">
+    <p class="cart-empty">Your cart is empty</p>
+  </div>
+  <div class="cart-drawer-foot">
+    <div class="cart-subtotal">
+      <span>Subtotal</span>
+      <span>$0</span>
+    </div>
+    <button class="cart-checkout">Proceed to Checkout</button>
+  </div>
+</div>
+
+<script>
+  // Landing animation
+  const landing = document.getElementById('landing');
+  const site = document.getElementById('site');
+  const enterBtn = document.querySelector('.enter-btn');
+
+  enterBtn.addEventListener('click', () => {
+    landing.classList.add('landing-fade-exit');
+    setTimeout(() => {
+      landing.classList.add('hide');
+      site.classList.add('visible');
+    }, 500);
+  });
+
+  // Auto-hide landing after 2 seconds
+  setTimeout(() => {
+    if (!landing.classList.contains('hide')) {
+      landing.classList.add('landing-fade-exit');
+      setTimeout(() => {
+        landing.classList.add('hide');
+        site.classList.add('visible');
+      }, 500);
+    }
+  }, 2000);
+
+  // Navbar scroll effect
+  const navbar = document.querySelector('.navbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
+
+  // Scroll reveal animation
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Cart functionality
+  const cartBtn = document.querySelector('.cart-btn');
+  const cartOverlay = document.querySelector('.cart-drawer-overlay');
+  const cartDrawer = document.querySelector('.cart-drawer');
+  const cartClose = document.querySelector('.cart-close');
+
+  cartBtn.addEventListener('click', () => {
+    cartOverlay.classList.add('open');
+    cartDrawer.classList.add('open');
+  });
+
+  [cartOverlay, cartClose].forEach(el => {
+    el.addEventListener('click', () => {
+      cartOverlay.classList.remove('open');
+      cartDrawer.classList.remove('open');
+    });
+  });
+
+  // Add to cart
+  document.querySelectorAll('.add-cart-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      btn.classList.add('added');
+      btn.textContent = '✓ Added';
+      document.querySelector('.cart-count').textContent = 
+        parseInt(document.querySelector('.cart-count').textContent) + 1;
+      setTimeout(() => {
+        btn.classList.remove('added');
+        btn.textContent = 'Add';
+      }, 2000);
+    });
+  });
+</script>
+
+</body>
+</html>
